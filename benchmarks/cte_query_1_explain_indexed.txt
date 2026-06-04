@@ -1,0 +1,38 @@
+                                                                      QUERY PLAN                                                                       
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=17129924766.97..17129924866.96 rows=39998 width=40) (actual time=653.193..653.201 rows=89 loops=1)
+   Sort Key: rolling_calculations.day
+   Sort Method: quicksort  Memory: 29kB
+   Buffers: shared hit=10831
+   CTE daily_revenue
+     ->  HashAggregate  (cost=87390.50..112156.12 rows=1000000 width=36) (actual time=644.293..644.499 rows=733 loops=1)
+           Group Key: (orders.created_at)::date
+           Planned Partitions: 64  Batches: 1  Memory Usage: 1297kB
+           Buffers: shared hit=10828
+           ->  Seq Scan on orders  (cost=0.00..23328.00 rows=1000000 width=10) (actual time=329.655..492.604 rows=1000000 loops=1)
+                 Buffers: shared hit=10828
+   ->  Subquery Scan on rolling_calculations  (cost=16261754166.00..17129809553.47 rows=39998 width=40) (actual time=652.948..653.095 rows=89 loops=1)
+         Buffers: shared hit=10828
+         ->  HashAggregate  (cost=16261754166.00..17129809353.48 rows=39998 width=68) (actual time=652.940..653.067 rows=89 loops=1)
+               Group Key: d1.day, d1.daily_revenue
+               Planned Partitions: 4  Batches: 1  Memory Usage: 849kB
+               Buffers: shared hit=10828
+               ->  Nested Loop  (cost=0.00..11771017916.00 rows=37037000000 width=68) (actual time=644.332..652.518 rows=623 loops=1)
+                     Join Filter: ((d2.day <= d1.day) AND (d2.day >= (d1.day - 6)))
+                     Rows Removed by Join Filter: 64614
+                     Buffers: shared hit=10828
+                     ->  CTE Scan on daily_revenue d1  (cost=0.00..27500.00 rows=333333 width=36) (actual time=644.320..644.412 rows=89 loops=1)
+                           Filter: (day >= (CURRENT_DATE - '90 days'::interval))
+                           Rows Removed by Filter: 644
+                           Buffers: shared hit=10828
+                     ->  CTE Scan on daily_revenue d2  (cost=0.00..20000.00 rows=1000000 width=36) (actual time=0.000..0.051 rows=733 loops=89)
+ Planning:
+   Buffers: shared hit=142
+ Planning Time: 1.434 ms
+ JIT:
+   Functions: 19
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 4.477 ms, Inlining 105.632 ms, Optimization 136.018 ms, Emission 88.029 ms, Total 334.156 ms
+ Execution Time: 686.954 ms
+(34 rows)
+

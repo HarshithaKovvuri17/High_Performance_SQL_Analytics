@@ -1,0 +1,23 @@
+                                                                 QUERY PLAN                                                                  
+---------------------------------------------------------------------------------------------------------------------------------------------
+ Subquery Scan on ordered_order_arrays  (cost=175176.84..186289.99 rows=44526 width=56) (actual time=1510.562..2221.197 rows=175076 loops=1)
+   Buffers: shared hit=10837, temp read=11995 written=12016
+   ->  GroupAggregate  (cost=175176.84..185844.73 rows=44526 width=68) (actual time=1508.689..2132.900 rows=175076 loops=1)
+         Group Key: orders.user_id
+         Buffers: shared hit=10837, temp read=11995 written=12016
+         ->  Sort  (cost=175176.84..177676.84 rows=1000000 width=34) (actual time=1482.560..1696.386 rows=1000000 loops=1)
+               Sort Key: orders.user_id, orders.created_at, orders.order_id
+               Sort Method: external merge  Disk: 48032kB
+               Buffers: shared hit=10837, temp read=11995 written=12016
+               ->  Seq Scan on orders  (cost=0.00..20828.00 rows=1000000 width=34) (actual time=15.217..236.940 rows=1000000 loops=1)
+                     Buffers: shared hit=10828
+ Planning:
+   Buffers: shared hit=99
+ Planning Time: 1.718 ms
+ JIT:
+   Functions: 8
+   Options: Inlining false, Optimization false, Expressions true, Deforming true
+   Timing: Generation 1.011 ms, Inlining 0.000 ms, Optimization 0.913 ms, Emission 14.401 ms, Total 16.324 ms
+ Execution Time: 2276.627 ms
+(19 rows)
+

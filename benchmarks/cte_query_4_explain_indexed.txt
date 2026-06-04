@@ -1,0 +1,58 @@
+                                                                                QUERY PLAN                                                                                 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Left Join  (cost=71726.60..67933107.37 rows=1286601670 width=12) (actual time=677.882..721.129 rows=36064 loops=1)
+   Merge Cond: (orders_last_30d.user_id = l.user_id)
+   Filter: (COALESCE(l.orders_last_30d, 0) < COALESCE(p.orders_prev_30d, 0))
+   Rows Removed by Filter: 49086
+   Buffers: shared hit=7530 read=140 written=1
+   CTE orders_last_30d
+     ->  GroupAggregate  (cost=0.43..25527.65 rows=42973 width=8) (actual time=428.457..483.697 rows=55889 loops=1)
+           Group Key: orders.user_id
+           Buffers: shared hit=3754 read=81 written=1
+           ->  Index Only Scan using idx_orders_user_created on orders  (cost=0.43..24296.47 rows=138804 width=4) (actual time=427.154..462.923 rows=142018 loops=1)
+                 Index Cond: (created_at >= (CURRENT_TIMESTAMP - '30 days'::interval))
+                 Heap Fetches: 0
+                 Buffers: shared hit=3754 read=81 written=1
+   CTE orders_prev_30d
+     ->  GroupAggregate  (cost=0.43..27780.38 rows=42188 width=8) (actual time=1.971..51.564 rows=54324 loops=1)
+           Group Key: orders_1.user_id
+           Buffers: shared hit=3776 read=59
+           ->  Index Only Scan using idx_orders_user_created on orders orders_1  (cost=0.43..26638.17 rows=122973 width=4) (actual time=0.488..33.334 rows=120838 loops=1)
+                 Index Cond: ((created_at >= (CURRENT_TIMESTAMP - '60 days'::interval)) AND (created_at < (CURRENT_TIMESTAMP - '30 days'::interval)))
+                 Heap Fetches: 0
+                 Buffers: shared hit=3776 read=59
+   ->  Merge Left Join  (cost=14252.09..284135.81 rows=17963861 width=8) (actual time=666.031..691.068 rows=85150 loops=1)
+         Merge Cond: (orders_last_30d.user_id = p.user_id)
+         Buffers: shared hit=7530 read=140 written=1
+         ->  Sort  (cost=10167.33..10380.23 rows=85161 width=4) (actual time=650.693..655.544 rows=85150 loops=1)
+               Sort Key: orders_last_30d.user_id
+               Sort Method: quicksort  Memory: 3073kB
+               Buffers: shared hit=7530 read=140 written=1
+               ->  HashAggregate  (cost=2341.93..3193.54 rows=85161 width=4) (actual time=618.639..633.817 rows=85150 loops=1)
+                     Group Key: orders_last_30d.user_id
+                     Batches: 1  Memory Usage: 6417kB
+                     Buffers: shared hit=7530 read=140 written=1
+                     ->  Append  (cost=0.00..2129.03 rows=85161 width=4) (actual time=428.468..576.835 rows=110213 loops=1)
+                           Buffers: shared hit=7530 read=140 written=1
+                           ->  CTE Scan on orders_last_30d  (cost=0.00..859.46 rows=42973 width=4) (actual time=428.466..499.907 rows=55889 loops=1)
+                                 Buffers: shared hit=3754 read=81 written=1
+                           ->  CTE Scan on orders_prev_30d  (cost=0.00..843.76 rows=42188 width=4) (actual time=1.978..66.684 rows=54324 loops=1)
+                                 Buffers: shared hit=3776 read=59
+         ->  Sort  (cost=4084.76..4190.23 rows=42188 width=8) (actual time=15.227..18.214 rows=54324 loops=1)
+               Sort Key: p.user_id
+               Sort Method: quicksort  Memory: 3234kB
+               ->  CTE Scan on orders_prev_30d p  (cost=0.00..843.76 rows=42188 width=8) (actual time=0.015..5.599 rows=54324 loops=1)
+   ->  Sort  (cost=4166.48..4273.91 rows=42973 width=8) (actual time=11.790..14.900 rows=55889 loops=1)
+         Sort Key: l.user_id
+         Sort Method: quicksort  Memory: 3283kB
+         ->  CTE Scan on orders_last_30d l  (cost=0.00..859.46 rows=42973 width=8) (actual time=0.004..4.230 rows=55889 loops=1)
+ Planning:
+   Buffers: shared hit=124
+ Planning Time: 1.464 ms
+ JIT:
+   Functions: 37
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 2.147 ms, Inlining 109.852 ms, Optimization 187.726 ms, Emission 129.230 ms, Total 428.955 ms
+ Execution Time: 758.818 ms
+(54 rows)
+

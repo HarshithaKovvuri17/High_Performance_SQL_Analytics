@@ -1,0 +1,51 @@
+                                                                                               QUERY PLAN                                                                                               
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Subquery Scan on lagged_counts  (cost=3.38..86175.73 rows=148 width=12) (actual time=27.833..678.281 rows=36064 loops=1)
+   Filter: ((lagged_counts.order_count < lagged_counts.prev_order_count) AND (lagged_counts.bucket_id = 1))
+   Rows Removed by Filter: 134236
+   Buffers: shared hit=7520 read=150 written=1
+   ->  WindowAgg  (cost=3.38..84840.68 rows=88954 width=24) (actual time=27.827..660.760 rows=170300 loops=1)
+         Buffers: shared hit=7520 read=150 written=1
+         ->  Incremental Sort  (cost=3.38..83283.98 rows=88954 width=16) (actual time=27.806..551.434 rows=170300 loops=1)
+               Sort Key: orders.user_id, (1) DESC
+               Presorted Key: orders.user_id
+               Full-sort Groups: 5322  Sort Method: quicksort  Average Memory: 26kB  Peak Memory: 26kB
+               Buffers: shared hit=7520 read=150 written=1
+               ->  Merge Left Join  (cost=1.55..80837.75 rows=88954 width=16) (actual time=11.199..499.527 rows=170300 loops=1)
+                     Merge Cond: (orders.user_id = orders_1.user_id)
+                     Join Filter: ((CASE WHEN (orders_1.created_at >= (CURRENT_TIMESTAMP - '30 days'::interval)) THEN 1 ELSE 2 END) = (1))
+                     Rows Removed by Join Filter: 85150
+                     Buffers: shared hit=7520 read=150 written=1
+                     ->  Nested Loop  (cost=0.43..27292.60 rows=88954 width=8) (actual time=0.677..139.207 rows=170300 loops=1)
+                           Buffers: shared hit=3834 read=1
+                           ->  Unique  (cost=0.43..26180.64 rows=44477 width=4) (actual time=0.667..85.784 rows=85150 loops=1)
+                                 Buffers: shared hit=3834 read=1
+                                 ->  Index Only Scan using idx_orders_user_created on orders  (cost=0.43..25526.20 rows=261777 width=4) (actual time=0.665..55.574 rows=262856 loops=1)
+                                       Index Cond: (created_at >= (CURRENT_TIMESTAMP - '60 days'::interval))
+                                       Heap Fetches: 0
+                                       Buffers: shared hit=3834 read=1
+                           ->  Materialize  (cost=0.00..0.04 rows=2 width=4) (actual time=0.000..0.000 rows=2 loops=85150)
+                                 ->  Append  (cost=0.00..0.03 rows=2 width=4) (actual time=0.002..0.008 rows=2 loops=1)
+                                       ->  Result  (cost=0.00..0.01 rows=1 width=4) (actual time=0.001..0.002 rows=1 loops=1)
+                                       ->  Result  (cost=0.00..0.01 rows=1 width=4) (actual time=0.000..0.001 rows=1 loops=1)
+                     ->  Materialize  (cost=1.12..44815.01 rows=261777 width=16) (actual time=10.515..291.636 rows=139474 loops=1)
+                           Buffers: shared hit=3686 read=149 written=1
+                           ->  GroupAggregate  (cost=1.12..41542.79 rows=261777 width=16) (actual time=10.505..258.851 rows=110213 loops=1)
+                                 Group Key: orders_1.user_id, (CASE WHEN (orders_1.created_at >= (CURRENT_TIMESTAMP - '30 days'::interval)) THEN 1 ELSE 2 END)
+                                 Buffers: shared hit=3686 read=149 written=1
+                                 ->  Incremental Sort  (cost=1.12..34998.37 rows=261777 width=8) (actual time=9.335..193.533 rows=262856 loops=1)
+                                       Sort Key: orders_1.user_id, (CASE WHEN (orders_1.created_at >= (CURRENT_TIMESTAMP - '30 days'::interval)) THEN 1 ELSE 2 END)
+                                       Presorted Key: orders_1.user_id
+                                       Full-sort Groups: 6140  Sort Method: quicksort  Average Memory: 27kB  Peak Memory: 27kB
+                                       Pre-sorted Groups: 455  Sort Method: quicksort  Average Memory: 845kB  Peak Memory: 845kB
+                                       Buffers: shared hit=3686 read=149 written=1
+                                       ->  Index Only Scan using idx_orders_user_created on orders orders_1  (cost=0.43..27489.53 rows=261777 width=8) (actual time=0.438..112.235 rows=262856 loops=1)
+                                             Index Cond: (created_at >= (CURRENT_TIMESTAMP - '60 days'::interval))
+                                             Heap Fetches: 0
+                                             Buffers: shared hit=3686 read=149 written=1
+ Planning:
+   Buffers: shared hit=131
+ Planning Time: 2.271 ms
+ Execution Time: 681.578 ms
+(47 rows)
+

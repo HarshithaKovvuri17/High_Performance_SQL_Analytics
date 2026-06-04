@@ -1,0 +1,53 @@
+                                                                                        QUERY PLAN                                                                                         
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Incremental Sort  (cost=71005.00..74938.61 rows=44526 width=30) (actual time=2234.484..2289.226 rows=250 loops=1)
+   Sort Key: cohort_spending.cohort_month, ((cohort_spending.rank_in_cohort)::integer), cohort_spending.user_id
+   Presorted Key: cohort_spending.cohort_month
+   Full-sort Groups: 7  Sort Method: quicksort  Average Memory: 26kB  Peak Memory: 26kB
+   Buffers: shared hit=12382, temp read=7817 written=10023
+   ->  Subquery Scan on cohort_spending  (cost=70864.31..71977.46 rows=44526 width=30) (actual time=2225.998..2288.983 rows=250 loops=1)
+         Buffers: shared hit=12379, temp read=7817 written=10023
+         ->  WindowAgg  (cost=70864.31..71754.83 rows=44526 width=48) (actual time=2225.970..2288.840 rows=250 loops=1)
+               Run Condition: (dense_rank() OVER (?) <= 10)
+               Buffers: shared hit=12379, temp read=7817 written=10023
+               ->  Sort  (cost=70864.31..70975.63 rows=44526 width=40) (actual time=2225.951..2273.159 rows=175076 loops=1)
+                     Sort Key: u.cohort_month, s.total_spend DESC
+                     Sort Method: external merge  Disk: 4472kB
+                     Buffers: shared hit=12379, temp read=7817 written=10023
+                     ->  Hash Join  (cost=63367.37..67426.38 rows=44526 width=40) (actual time=1660.750..1985.190 rows=175076 loops=1)
+                           Hash Cond: (u.user_id = s.user_id)
+                           Buffers: shared hit=12376, temp read=7258 written=9462
+                           ->  Seq Scan on users u  (cost=0.00..3534.00 rows=200000 width=8) (actual time=0.121..96.116 rows=200000 loops=1)
+                                 Buffers: shared hit=1534
+                           ->  Hash  (cost=62810.79..62810.79 rows=44526 width=36) (actual time=1660.102..1660.276 rows=175076 loops=1)
+                                 Buckets: 262144 (originally 65536)  Batches: 2 (originally 1)  Memory Usage: 6145kB
+                                 Buffers: shared hit=10842, temp read=6268 written=8813
+                                 ->  Subquery Scan on s  (cost=50750.94..62810.79 rows=44526 width=36) (actual time=886.867..1535.943 rows=175076 loops=1)
+                                       Buffers: shared hit=10842, temp read=6268 written=8472
+                                       ->  Finalize GroupAggregate  (cost=50750.94..62365.53 rows=44526 width=36) (actual time=886.864..1504.826 rows=175076 loops=1)
+                                             Group Key: orders.user_id
+                                             Buffers: shared hit=10842, temp read=6268 written=8472
+                                             ->  Gather Merge  (cost=50750.94..61141.07 rows=89052 width=36) (actual time=886.822..1096.802 rows=339468 loops=1)
+                                                   Workers Planned: 2
+                                                   Workers Launched: 2
+                                                   Buffers: shared hit=10842, temp read=6268 written=8472
+                                                   ->  Sort  (cost=49750.92..49862.23 rows=44526 width=36) (actual time=834.785..872.958 rows=113156 loops=3)
+                                                         Sort Key: orders.user_id
+                                                         Sort Method: external merge  Disk: 9352kB
+                                                         Buffers: shared hit=10842, temp read=6268 written=8472
+                                                         Worker 0:  Sort Method: external merge  Disk: 8504kB
+                                                         Worker 1:  Sort Method: external merge  Disk: 8432kB
+                                                         ->  Partial HashAggregate  (cost=41687.40..46312.99 rows=44526 width=36) (actual time=279.659..691.392 rows=113156 loops=3)
+                                                               Group Key: orders.user_id
+                                                               Planned Partitions: 4  Batches: 21  Memory Usage: 8249kB  Disk Usage: 7824kB
+                                                               Buffers: shared hit=10828, temp read=2982 written=5177
+                                                               Worker 0:  Batches: 21  Memory Usage: 8249kB  Disk Usage: 7464kB
+                                                               Worker 1:  Batches: 21  Memory Usage: 8249kB  Disk Usage: 7408kB
+                                                               ->  Parallel Seq Scan on orders  (cost=0.00..14994.67 rows=416667 width=10) (actual time=0.024..46.667 rows=333333 loops=3)
+                                                                     Buffers: shared hit=10828
+ Planning:
+   Buffers: shared hit=181 read=3
+ Planning Time: 5.504 ms
+ Execution Time: 2297.247 ms
+(49 rows)
+

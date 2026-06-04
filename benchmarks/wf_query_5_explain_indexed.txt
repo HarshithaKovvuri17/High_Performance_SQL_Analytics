@@ -1,0 +1,22 @@
+                                                                           QUERY PLAN                                                                           
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Incremental Sort  (cost=3.15..134507.69 rows=1000000 width=52) (actual time=130.284..2359.936 rows=1000000 loops=1)
+   Sort Key: user_id, order_id
+   Presorted Key: user_id
+   Full-sort Groups: 21135  Sort Method: quicksort  Average Memory: 29kB  Peak Memory: 29kB
+   Pre-sorted Groups: 1289  Sort Method: quicksort  Average Memory: 4065kB  Peak Memory: 4065kB
+   Buffers: shared hit=1003630 read=27
+   ->  WindowAgg  (cost=0.42..98671.13 rows=1000000 width=52) (actual time=74.134..2007.666 rows=1000000 loops=1)
+         Buffers: shared hit=1003624 read=27
+         ->  Index Scan using idx_orders_user_created on orders  (cost=0.42..73671.13 rows=1000000 width=26) (actual time=9.263..1022.641 rows=1000000 loops=1)
+               Buffers: shared hit=1003624 read=27
+ Planning:
+   Buffers: shared hit=111
+ Planning Time: 0.990 ms
+ JIT:
+   Functions: 7
+   Options: Inlining false, Optimization false, Expressions true, Deforming true
+   Timing: Generation 0.747 ms, Inlining 0.000 ms, Optimization 0.595 ms, Emission 8.659 ms, Total 10.001 ms
+ Execution Time: 2430.570 ms
+(18 rows)
+

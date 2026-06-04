@@ -1,0 +1,48 @@
+                                                                      QUERY PLAN                                                                       
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=115609.94..266747.59 rows=1000000 width=52) (actual time=1200.119..2785.862 rows=1000000 loops=1)
+   Merge Cond: (o.user_id = orders.user_id)
+   Buffers: shared hit=21756, temp read=10718 written=13198
+   ->  Gather Merge  (cost=64859.00..181325.48 rows=1000000 width=26) (actual time=359.182..782.113 rows=1000000 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=10914, temp read=4540 written=4558
+         ->  Sort  (cost=63858.98..64900.65 rows=416667 width=26) (actual time=331.771..427.887 rows=333333 loops=3)
+               Sort Key: o.user_id, o.order_id
+               Sort Method: external merge  Disk: 12856kB
+               Buffers: shared hit=10914, temp read=4540 written=4558
+               Worker 0:  Sort Method: external merge  Disk: 11864kB
+               Worker 1:  Sort Method: external merge  Disk: 11600kB
+               ->  Parallel Seq Scan on orders o  (cost=0.00..14994.67 rows=416667 width=26) (actual time=10.778..77.264 rows=333333 loops=3)
+                     Buffers: shared hit=10828
+   ->  Finalize GroupAggregate  (cost=50750.94..62365.53 rows=44526 width=36) (actual time=840.855..1279.716 rows=175076 loops=1)
+         Group Key: orders.user_id
+         Buffers: shared hit=10842, temp read=6178 written=8640
+         ->  Gather Merge  (cost=50750.94..61141.07 rows=89052 width=36) (actual time=840.742..980.321 rows=337470 loops=1)
+               Workers Planned: 2
+               Workers Launched: 2
+               Buffers: shared hit=10842, temp read=6178 written=8640
+               ->  Sort  (cost=49750.92..49862.23 rows=44526 width=36) (actual time=724.684..760.611 rows=112490 loops=3)
+                     Sort Key: orders.user_id
+                     Sort Method: external merge  Disk: 9744kB
+                     Buffers: shared hit=10842, temp read=6178 written=8640
+                     Worker 0:  Sort Method: external merge  Disk: 8080kB
+                     Worker 1:  Sort Method: external merge  Disk: 8312kB
+                     ->  Partial HashAggregate  (cost=41687.40..46312.99 rows=44526 width=36) (actual time=353.219..633.017 rows=112490 loops=3)
+                           Group Key: orders.user_id
+                           Planned Partitions: 4  Batches: 21  Memory Usage: 8249kB  Disk Usage: 9992kB
+                           Buffers: shared hit=10828, temp read=2911 written=5364
+                           Worker 0:  Batches: 21  Memory Usage: 8249kB  Disk Usage: 7344kB
+                           Worker 1:  Batches: 21  Memory Usage: 8249kB  Disk Usage: 7416kB
+                           ->  Parallel Seq Scan on orders  (cost=0.00..14994.67 rows=416667 width=10) (actual time=0.025..60.693 rows=333333 loops=3)
+                                 Buffers: shared hit=10828
+ Planning:
+   Buffers: shared hit=105
+ Planning Time: 1.145 ms
+ JIT:
+   Functions: 42
+   Options: Inlining false, Optimization false, Expressions true, Deforming true
+   Timing: Generation 9.430 ms, Inlining 0.000 ms, Optimization 5.970 ms, Emission 110.719 ms, Total 126.119 ms
+ Execution Time: 2880.547 ms
+(44 rows)
+

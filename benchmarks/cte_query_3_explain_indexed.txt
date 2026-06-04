@@ -1,0 +1,24 @@
+                                                                              QUERY PLAN                                                                               
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Subquery Scan on ordered_order_arrays  (cost=0.51..127284.28 rows=44526 width=56) (actual time=173.876..2082.589 rows=175076 loops=1)
+   Buffers: shared hit=1003286 read=377
+   ->  GroupAggregate  (cost=0.51..126839.02 rows=44526 width=68) (actual time=173.452..2003.957 rows=175076 loops=1)
+         Group Key: orders.user_id
+         Buffers: shared hit=1003286 read=377
+         ->  Incremental Sort  (cost=0.51..118671.13 rows=1000000 width=34) (actual time=36.266..1612.015 rows=1000000 loops=1)
+               Sort Key: orders.user_id, orders.created_at, orders.order_id
+               Presorted Key: orders.user_id, orders.created_at
+               Full-sort Groups: 31250  Sort Method: quicksort  Average Memory: 27kB  Peak Memory: 27kB
+               Buffers: shared hit=1003286 read=377
+               ->  Index Scan using idx_orders_user_created on orders  (cost=0.42..73671.13 rows=1000000 width=34) (actual time=35.770..1299.839 rows=1000000 loops=1)
+                     Buffers: shared hit=1003274 read=377
+ Planning:
+   Buffers: shared hit=125
+ Planning Time: 1.754 ms
+ JIT:
+   Functions: 8
+   Options: Inlining false, Optimization false, Expressions true, Deforming true
+   Timing: Generation 2.225 ms, Inlining 0.000 ms, Optimization 1.572 ms, Emission 34.184 ms, Total 37.980 ms
+ Execution Time: 2160.611 ms
+(20 rows)
+
