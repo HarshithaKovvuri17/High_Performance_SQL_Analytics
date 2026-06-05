@@ -311,4 +311,6 @@ This project demonstrates practical expertise in:
 
 # 👨‍💻 Author
 
-**Harshitha**
+**Kovvuri Harshitha**
+- Email: harshitahanisha@gmail.com
+- Github Url: https://github.com/HarshithaKovvuri17/High_Performance_SQL_Analytics.git
