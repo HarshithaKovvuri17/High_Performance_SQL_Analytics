@@ -1,75 +1,75 @@
                                                                                     QUERY PLAN                                                                                    
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Sort  (cost=1683127.57..1683128.19 rows=250 width=30) (actual time=42003.962..42004.117 rows=250 loops=1)
+ Sort  (cost=1683127.57..1683128.19 rows=250 width=30) (actual time=91163.799..91164.754 rows=250 loops=1)
    Sort Key: t1.cohort_month, ((((SubPlan 2))::integer + 1)), t1.user_id
    Sort Method: quicksort  Memory: 36kB
-   Buffers: shared hit=310940, temp read=141637 written=200412
+   Buffers: shared hit=310940, temp read=137613 written=191355
    CTE top_spenders
-     ->  Nested Loop  (cost=71134.16..1681541.36 rows=250 width=40) (actual time=7827.895..41987.776 rows=250 loops=1)
-           Buffers: shared hit=310937, temp read=141637 written=200412
-           ->  HashAggregate  (cost=4034.00..4034.25 rows=25 width=4) (actual time=1247.633..1247.747 rows=25 loops=1)
+     ->  Nested Loop  (cost=71134.16..1681541.36 rows=250 width=40) (actual time=5210.747..91125.213 rows=250 loops=1)
+           Buffers: shared hit=310937, temp read=137613 written=191355
+           ->  HashAggregate  (cost=4034.00..4034.25 rows=25 width=4) (actual time=893.361..893.585 rows=25 loops=1)
                  Group Key: users.cohort_month
                  Batches: 1  Memory Usage: 24kB
                  Buffers: shared hit=1534
-                 ->  Seq Scan on users  (cost=0.00..3534.00 rows=200000 width=4) (actual time=0.029..81.425 rows=200000 loops=1)
+                 ->  Seq Scan on users  (cost=0.00..3534.00 rows=200000 width=4) (actual time=0.079..29.191 rows=200000 loops=1)
                        Buffers: shared hit=1534
-           ->  Limit  (cost=67100.16..67100.18 rows=10 width=36) (actual time=1629.580..1629.589 rows=10 loops=25)
-                 Buffers: shared hit=309403, temp read=141637 written=200412
-                 ->  Sort  (cost=67100.16..67104.61 rows=1781 width=36) (actual time=1629.555..1629.561 rows=10 loops=25)
+           ->  Limit  (cost=67100.16..67100.18 rows=10 width=36) (actual time=3609.216..3609.251 rows=10 loops=25)
+                 Buffers: shared hit=309403, temp read=137613 written=191355
+                 ->  Sort  (cost=67100.16..67104.61 rows=1781 width=36) (actual time=3609.179..3609.212 rows=10 loops=25)
                        Sort Key: (sum(orders.amount)) DESC
                        Sort Method: top-N heapsort  Memory: 25kB
-                       Buffers: shared hit=309403, temp read=141637 written=200412
-                       ->  Hash Join  (cost=54884.94..67061.67 rows=1781 width=36) (actual time=1211.064..1625.856 rows=7003 loops=25)
+                       Buffers: shared hit=309403, temp read=137613 written=191355
+                       ->  Hash Join  (cost=54884.94..67061.67 rows=1781 width=36) (actual time=2733.147..3599.311 rows=7003 loops=25)
                              Hash Cond: (orders.user_id = u.user_id)
-                             Buffers: shared hit=228015, temp read=90816 written=127363
-                             ->  Finalize GroupAggregate  (cost=50750.94..62365.53 rows=44526 width=36) (actual time=1195.069..1569.361 rows=175076 loops=25)
+                             Buffers: shared hit=239389, temp read=96369 written=134583
+                             ->  Finalize GroupAggregate  (cost=50750.94..62365.53 rows=44526 width=36) (actual time=2700.565..3471.684 rows=175076 loops=25)
                                    Group Key: orders.user_id
-                                   Buffers: shared hit=189665, temp read=90816 written=127363
-                                   ->  Gather Merge  (cost=50750.94..61141.07 rows=89052 width=36) (actual time=1195.041..1318.004 rows=285239 loops=25)
+                                   Buffers: shared hit=201039, temp read=96369 written=134583
+                                   ->  Gather Merge  (cost=50750.94..61141.07 rows=89052 width=36) (actual time=2700.497..2975.210 rows=274984 loops=25)
                                          Workers Planned: 2
                                          Workers Launched: 2
-                                         Buffers: shared hit=189665, temp read=90816 written=127363
-                                         ->  Sort  (cost=49750.92..49862.23 rows=44526 width=36) (actual time=960.755..982.676 rows=95080 loops=75)
+                                         Buffers: shared hit=201039, temp read=96369 written=134583
+                                         ->  Sort  (cost=49750.92..49862.23 rows=44526 width=36) (actual time=2051.032..2093.963 rows=91661 loops=75)
                                                Sort Key: orders.user_id
-                                               Sort Method: external merge  Disk: 12088kB
-                                               Buffers: shared hit=271050, temp read=141637 written=200412
-                                               Worker 0:  Sort Method: external merge  Disk: 3560kB
-                                               Worker 1:  Sort Method: external merge  Disk: 5376kB
-                                               ->  Partial HashAggregate  (cost=41687.40..46312.99 rows=44526 width=36) (actual time=574.420..865.270 rows=95080 loops=75)
+                                               Sort Method: external merge  Disk: 12000kB
+                                               Buffers: shared hit=271050, temp read=137613 written=191355
+                                               Worker 0:  Sort Method: external merge  Disk: 4928kB
+                                               Worker 1:  Sort Method: external merge  Disk: 4984kB
+                                               ->  Partial HashAggregate  (cost=41687.40..46312.99 rows=44526 width=36) (actual time=1143.233..1840.761 rows=91661 loops=75)
                                                      Group Key: orders.user_id
-                                                     Planned Partitions: 4  Batches: 501  Memory Usage: 8249kB  Disk Usage: 15536kB
-                                                     Buffers: shared hit=270700, temp read=72621 written=131226
-                                                     Worker 0:  Batches: 5  Memory Usage: 8241kB  Disk Usage: 1624kB
-                                                     Worker 1:  Batches: 5  Memory Usage: 8241kB  Disk Usage: 5896kB
-                                                     ->  Parallel Seq Scan on orders  (cost=0.00..14994.67 rows=416667 width=10) (actual time=0.021..47.363 rows=333333 loops=75)
+                                                     Planned Partitions: 4  Batches: 501  Memory Usage: 8249kB  Disk Usage: 19216kB
+                                                     Buffers: shared hit=270700, temp read=71543 written=125132
+                                                     Worker 0:  Batches: 5  Memory Usage: 8241kB  Disk Usage: 3504kB
+                                                     Worker 1:  Batches: 5  Memory Usage: 8241kB  Disk Usage: 3544kB
+                                                     ->  Parallel Seq Scan on orders  (cost=0.00..14994.67 rows=416667 width=10) (actual time=0.178..98.818 rows=333333 loops=75)
                                                            Buffers: shared hit=270700
-                             ->  Hash  (cost=4034.00..4034.00 rows=8000 width=4) (actual time=15.824..15.824 rows=8000 loops=25)
+                             ->  Hash  (cost=4034.00..4034.00 rows=8000 width=4) (actual time=31.845..31.845 rows=8000 loops=25)
                                    Buckets: 16384 (originally 8192)  Batches: 1 (originally 1)  Memory Usage: 436kB
                                    Buffers: shared hit=38350
-                                   ->  Seq Scan on users u  (cost=0.00..4034.00 rows=8000 width=4) (actual time=0.035..13.219 rows=8000 loops=25)
+                                   ->  Seq Scan on users u  (cost=0.00..4034.00 rows=8000 width=4) (actual time=0.021..25.557 rows=8000 loops=25)
                                          Filter: (cohort_month = users.cohort_month)
                                          Rows Removed by Filter: 192000
                                          Buffers: shared hit=38350
-   ->  CTE Scan on top_spenders t1  (cost=0.00..1576.25 rows=250 width=30) (actual time=41988.186..42003.737 rows=250 loops=1)
-         Buffers: shared hit=308008, temp read=139897 written=197893
+   ->  CTE Scan on top_spenders t1  (cost=0.00..1576.25 rows=250 width=30) (actual time=91130.232..91162.589 rows=250 loops=1)
+         Buffers: shared hit=307770, temp read=135719 written=188755
          SubPlan 2
-           ->  Aggregate  (cost=6.27..6.28 rows=1 width=8) (actual time=136.702..136.702 rows=1 loops=250)
-                 Buffers: shared hit=297841, temp read=136599 written=193476
-                 ->  Sort  (cost=6.26..6.26 rows=1 width=32) (actual time=136.696..136.696 rows=4 loops=250)
+           ->  Aggregate  (cost=6.27..6.28 rows=1 width=8) (actual time=343.803..343.803 rows=1 loops=250)
+                 Buffers: shared hit=298077, temp read=132671 written=184587
+                 ->  Sort  (cost=6.26..6.26 rows=1 width=32) (actual time=343.764..343.764 rows=4 loops=250)
                        Sort Key: t2.total_spend
                        Sort Method: quicksort  Memory: 25kB
-                       Buffers: shared hit=297841, temp read=136599 written=193476
-                       ->  CTE Scan on top_spenders t2  (cost=0.00..6.25 rows=1 width=32) (actual time=136.666..136.691 rows=4 loops=250)
+                       Buffers: shared hit=298077, temp read=132671 written=184587
+                       ->  CTE Scan on top_spenders t2  (cost=0.00..6.25 rows=1 width=32) (actual time=343.708..343.746 rows=4 loops=250)
                              Filter: ((total_spend > t1.total_spend) AND (cohort_month = t1.cohort_month))
                              Rows Removed by Filter: 246
-                             Buffers: shared hit=297841, temp read=136599 written=193476
+                             Buffers: shared hit=298077, temp read=132671 written=184587
  Planning:
    Buffers: shared hit=184 read=1
- Planning Time: 3.723 ms
+ Planning Time: 3.227 ms
  JIT:
    Functions: 64
    Options: Inlining true, Optimization true, Expressions true, Deforming true
-   Timing: Generation 14.917 ms, Inlining 442.638 ms, Optimization 986.677 ms, Emission 752.788 ms, Total 2197.020 ms
- Execution Time: 42058.288 ms
+   Timing: Generation 10.362 ms, Inlining 641.263 ms, Optimization 1045.256 ms, Emission 694.107 ms, Total 2390.988 ms
+ Execution Time: 91223.888 ms
 (71 rows)
 

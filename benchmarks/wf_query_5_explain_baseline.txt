@@ -1,26 +1,26 @@
                                                               QUERY PLAN                                                              
 --------------------------------------------------------------------------------------------------------------------------------------
- Incremental Sort  (cost=144412.96..207748.40 rows=1000000 width=52) (actual time=835.099..2571.784 rows=1000000 loops=1)
+ Incremental Sort  (cost=144412.96..207748.40 rows=1000000 width=52) (actual time=1835.956..4869.211 rows=1000000 loops=1)
    Sort Key: user_id, order_id
    Presorted Key: user_id
    Full-sort Groups: 21135  Sort Method: quicksort  Average Memory: 29kB  Peak Memory: 29kB
    Pre-sorted Groups: 1289  Sort Method: quicksort  Average Memory: 4065kB  Peak Memory: 4065kB
    Buffers: shared hit=10834, temp read=9058 written=9077
-   ->  WindowAgg  (cost=144411.84..171911.84 rows=1000000 width=52) (actual time=778.720..2118.381 rows=1000000 loops=1)
+   ->  WindowAgg  (cost=144411.84..171911.84 rows=1000000 width=52) (actual time=1743.557..4042.748 rows=1000000 loops=1)
          Buffers: shared hit=10828, temp read=9058 written=9077
-         ->  Sort  (cost=144411.84..146911.84 rows=1000000 width=26) (actual time=757.802..936.875 rows=1000000 loops=1)
+         ->  Sort  (cost=144411.84..146911.84 rows=1000000 width=26) (actual time=1687.208..2010.080 rows=1000000 loops=1)
                Sort Key: user_id
                Sort Method: external merge  Disk: 36272kB
                Buffers: shared hit=10828, temp read=9058 written=9077
-               ->  Seq Scan on orders  (cost=0.00..20828.00 rows=1000000 width=26) (actual time=11.564..144.560 rows=1000000 loops=1)
+               ->  Seq Scan on orders  (cost=0.00..20828.00 rows=1000000 width=26) (actual time=18.799..320.226 rows=1000000 loops=1)
                      Buffers: shared hit=10828
  Planning:
    Buffers: shared hit=76
- Planning Time: 0.876 ms
+ Planning Time: 2.236 ms
  JIT:
    Functions: 7
    Options: Inlining false, Optimization false, Expressions true, Deforming true
-   Timing: Generation 0.756 ms, Inlining 0.000 ms, Optimization 0.501 ms, Emission 11.104 ms, Total 12.361 ms
- Execution Time: 2664.593 ms
+   Timing: Generation 1.029 ms, Inlining 0.000 ms, Optimization 0.700 ms, Emission 18.162 ms, Total 19.891 ms
+ Execution Time: 5011.052 ms
 (22 rows)
 

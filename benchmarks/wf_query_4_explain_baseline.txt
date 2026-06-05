@@ -1,46 +1,46 @@
                                                                                    QUERY PLAN                                                                                    
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Subquery Scan on lagged_counts  (cost=96744.86..99858.99 rows=148 width=12) (actual time=1025.948..1140.883 rows=36063 loops=1)
+ Subquery Scan on lagged_counts  (cost=96702.96..99817.09 rows=148 width=12) (actual time=2011.849..2172.263 rows=36123 loops=1)
    Filter: ((lagged_counts.order_count < lagged_counts.prev_order_count) AND (lagged_counts.bucket_id = 1))
-   Rows Removed by Filter: 134237
-   Buffers: shared hit=21659, temp read=1167 written=1332
-   ->  WindowAgg  (cost=96744.86..98523.94 rows=88954 width=24) (actual time=1025.940..1128.366 rows=170300 loops=1)
-         Buffers: shared hit=21659, temp read=1167 written=1332
-         ->  Sort  (cost=96744.86..96967.25 rows=88954 width=16) (actual time=1025.791..1050.311 rows=170300 loops=1)
+   Rows Removed by Filter: 134023
+   Buffers: shared hit=21659, temp read=1166 written=1333
+   ->  WindowAgg  (cost=96702.96..98482.04 rows=88954 width=24) (actual time=2011.838..2155.922 rows=170146 loops=1)
+         Buffers: shared hit=21659, temp read=1166 written=1333
+         ->  Sort  (cost=96702.96..96925.35 rows=88954 width=16) (actual time=2011.653..2047.287 rows=170146 loops=1)
                Sort Key: orders_1.user_id, (1) DESC
                Sort Method: external merge  Disk: 3880kB
-               Buffers: shared hit=21659, temp read=1167 written=1332
-               ->  Hash Right Join  (cost=77544.41..89432.50 rows=88954 width=16) (actual time=809.989..956.544 rows=170300 loops=1)
+               Buffers: shared hit=21659, temp read=1166 written=1333
+               ->  Hash Right Join  (cost=77519.18..89390.60 rows=88954 width=16) (actual time=1696.880..1847.494 rows=170146 loops=1)
                      Hash Cond: ((orders.user_id = orders_1.user_id) AND ((CASE WHEN (orders.created_at >= (CURRENT_TIMESTAMP - '30 days'::interval)) THEN 1 ELSE 2 END) = (1)))
-                     Buffers: shared hit=21656, temp read=682 written=845
-                     ->  HashAggregate  (cost=45670.92..52297.23 rows=261780 width=16) (actual time=353.242..398.377 rows=110213 loops=1)
+                     Buffers: shared hit=21656, temp read=681 written=846
+                     ->  HashAggregate  (cost=45646.61..52263.63 rows=261413 width=16) (actual time=645.495..684.199 rows=110140 loops=1)
                            Group Key: orders.user_id, CASE WHEN (orders.created_at >= (CURRENT_TIMESTAMP - '30 days'::interval)) THEN 1 ELSE 2 END
                            Planned Partitions: 4  Batches: 5  Memory Usage: 8241kB  Disk Usage: 1632kB
-                           Buffers: shared hit=10828, temp read=147 written=310
-                           ->  Seq Scan on orders  (cost=0.00..30291.35 rows=261780 width=8) (actual time=0.030..239.049 rows=262861 loops=1)
+                           Buffers: shared hit=10828, temp read=147 written=312
+                           ->  Seq Scan on orders  (cost=0.00..30288.60 rows=261413 width=8) (actual time=0.044..398.244 rows=262500 loops=1)
                                  Filter: (created_at >= (CURRENT_TIMESTAMP - '60 days'::interval))
-                                 Rows Removed by Filter: 737139
+                                 Rows Removed by Filter: 737500
                                  Buffers: shared hit=10828
-                     ->  Hash  (cost=30539.18..30539.18 rows=88954 width=8) (actual time=455.856..455.861 rows=170300 loops=1)
+                     ->  Hash  (cost=30538.26..30538.26 rows=88954 width=8) (actual time=932.808..932.814 rows=170146 loops=1)
                            Buckets: 262144 (originally 131072)  Batches: 2 (originally 1)  Memory Usage: 6145kB
-                           Buffers: shared hit=10828, temp written=291
-                           ->  Nested Loop  (cost=28982.45..30539.18 rows=88954 width=8) (actual time=344.811..403.428 rows=170300 loops=1)
+                           Buffers: shared hit=10828, temp written=290
+                           ->  Nested Loop  (cost=28981.53..30538.26 rows=88954 width=8) (actual time=718.263..829.959 rows=170146 loops=1)
                                  Buffers: shared hit=10828
-                                 ->  HashAggregate  (cost=28982.45..29427.22 rows=44477 width=4) (actual time=344.107..365.185 rows=85150 loops=1)
+                                 ->  HashAggregate  (cost=28981.53..29426.30 rows=44477 width=4) (actual time=717.523..757.658 rows=85073 loops=1)
                                        Group Key: orders_1.user_id
                                        Batches: 1  Memory Usage: 6417kB
                                        Buffers: shared hit=10828
-                                       ->  Seq Scan on orders orders_1  (cost=0.00..28328.00 rows=261780 width=4) (actual time=0.050..239.875 rows=262861 loops=1)
+                                       ->  Seq Scan on orders orders_1  (cost=0.00..28328.00 rows=261413 width=4) (actual time=0.092..477.655 rows=262500 loops=1)
                                              Filter: (created_at >= (CURRENT_TIMESTAMP - '60 days'::interval))
-                                             Rows Removed by Filter: 737139
+                                             Rows Removed by Filter: 737500
                                              Buffers: shared hit=10828
-                                 ->  Materialize  (cost=0.00..0.04 rows=2 width=4) (actual time=0.000..0.000 rows=2 loops=85150)
-                                       ->  Append  (cost=0.00..0.03 rows=2 width=4) (actual time=0.005..0.008 rows=2 loops=1)
-                                             ->  Result  (cost=0.00..0.01 rows=1 width=4) (actual time=0.003..0.003 rows=1 loops=1)
-                                             ->  Result  (cost=0.00..0.01 rows=1 width=4) (actual time=0.000..0.001 rows=1 loops=1)
+                                 ->  Materialize  (cost=0.00..0.04 rows=2 width=4) (actual time=0.000..0.000 rows=2 loops=85073)
+                                       ->  Append  (cost=0.00..0.03 rows=2 width=4) (actual time=0.010..0.015 rows=2 loops=1)
+                                             ->  Result  (cost=0.00..0.01 rows=1 width=4) (actual time=0.007..0.007 rows=1 loops=1)
+                                             ->  Result  (cost=0.00..0.01 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=1)
  Planning:
    Buffers: shared hit=96
- Planning Time: 2.221 ms
- Execution Time: 1150.669 ms
+ Planning Time: 19.527 ms
+ Execution Time: 2190.475 ms
 (42 rows)
 

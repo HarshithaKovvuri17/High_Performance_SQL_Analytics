@@ -1,27 +1,27 @@
-                                                                QUERY PLAN                                                                 
--------------------------------------------------------------------------------------------------------------------------------------------
- Subquery Scan on rolling_calculations  (cost=140076.34..196743.01 rows=333333 width=40) (actual time=671.189..722.187 rows=89 loops=1)
+                                                                 QUERY PLAN                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------
+ Subquery Scan on rolling_calculations  (cost=140076.34..196743.01 rows=333333 width=40) (actual time=7213.962..7338.577 rows=89 loops=1)
    Filter: (rolling_calculations.day >= (CURRENT_DATE - '90 days'::interval))
    Rows Removed by Filter: 644
    Buffers: shared hit=10831, temp read=5144 written=5159
-   ->  WindowAgg  (cost=140076.34..177576.34 rows=1000000 width=68) (actual time=581.985..721.742 rows=733 loops=1)
+   ->  WindowAgg  (cost=140076.34..177576.34 rows=1000000 width=68) (actual time=6982.984..7336.539 rows=733 loops=1)
          Buffers: shared hit=10831, temp read=5144 written=5159
-         ->  GroupAggregate  (cost=140076.34..162576.34 rows=1000000 width=36) (actual time=567.613..706.455 rows=733 loops=1)
+         ->  GroupAggregate  (cost=140076.34..162576.34 rows=1000000 width=36) (actual time=5924.309..6274.090 rows=733 loops=1)
                Group Key: ((orders.created_at)::date)
                Buffers: shared hit=10831, temp read=5144 written=5159
-               ->  Sort  (cost=140076.34..142576.34 rows=1000000 width=10) (actual time=567.531..632.295 rows=1000000 loops=1)
+               ->  Sort  (cost=140076.34..142576.34 rows=1000000 width=10) (actual time=5923.940..6082.306 rows=1000000 loops=1)
                      Sort Key: ((orders.created_at)::date)
                      Sort Method: external merge  Disk: 20616kB
                      Buffers: shared hit=10831, temp read=5144 written=5159
-                     ->  Seq Scan on orders  (cost=0.00..23328.00 rows=1000000 width=10) (actual time=0.083..157.698 rows=1000000 loops=1)
+                     ->  Seq Scan on orders  (cost=0.00..23328.00 rows=1000000 width=10) (actual time=0.415..4601.837 rows=1000000 loops=1)
                            Buffers: shared hit=10828
  Planning:
    Buffers: shared hit=97 dirtied=1
- Planning Time: 1.092 ms
+ Planning Time: 10.596 ms
  JIT:
    Functions: 15
    Options: Inlining false, Optimization false, Expressions true, Deforming true
-   Timing: Generation 1.161 ms, Inlining 0.000 ms, Optimization 0.509 ms, Emission 13.914 ms, Total 15.584 ms
- Execution Time: 753.110 ms
+   Timing: Generation 14.897 ms, Inlining 0.000 ms, Optimization 48.391 ms, Emission 1010.436 ms, Total 1073.724 ms
+ Execution Time: 8217.759 ms
 (23 rows)
 

@@ -1,4 +1,4 @@
-# 🚀 High Performance SQL Analytics Benchmarking System
+# 🚀 High-Performance SQL Analytics: Benchmarking Window Functions and CTEs in PostgreSQL
 
 ## 📌 Project Overview
 
@@ -134,34 +134,68 @@ The primary goal of this project is to analyze query execution efficiency, scala
 
 # 📂 Complete Project Structure
 
-```text
+```
 High_Performance_SQL_Analytics/
 │
-├── data/
-│   ├── users.csv
-│   ├── orders.csv
-│
-├── sql/
-│   ├── schema.sql
-│   ├── load_data.sql
-│   ├── create_indexes.sql
-│   ├── window_queries.sql
-│   ├── cte_queries.sql
-│   ├── recursive_queries.sql
-│
-├── benchmarks/
-│   ├── explain_analyze_results.sql
-│   ├── pgbench_results.log
-│   ├── benchmark_report.json
-│
-├── scripts/
-│   ├── benchmark.py
-│   ├── data_generator.py
+├── .env
+├── .env.example
 │
 ├── docker-compose.yml
-├── requirements.txt
+├── init.sql
+├── benchmark.py
 ├── README.md
-└── .env
+├── testing.md
+├── results.json
+│
+├── queries/
+│   ├── create_indexes.sql
+│   │
+│   ├── window_q1.sql
+│   ├── window_q2.sql
+│   ├── window_q3.sql
+│   ├── window_q4.sql
+│   ├── window_q5.sql
+│   │
+│   ├── cte_q1.sql
+│   ├── cte_q2.sql
+│   ├── cte_q3.sql
+│   ├── cte_q4.sql
+│   ├── cte_q5.sql
+│   │
+│   └── recursive_referrals.sql
+│
+├── benchmarks/
+│   ├── wf_query_1_explain_baseline.txt
+│   ├── wf_query_1_explain_indexed.txt
+│   ├── wf_query_2_explain_baseline.txt
+│   ├── wf_query_2_explain_indexed.txt
+│   ├── wf_query_3_explain_baseline.txt
+│   ├── wf_query_3_explain_indexed.txt
+│   ├── wf_query_4_explain_baseline.txt
+│   ├── wf_query_4_explain_indexed.txt
+│   ├── wf_query_5_explain_baseline.txt
+│   ├── wf_query_5_explain_indexed.txt
+│   │
+│   ├── cte_query_1_explain_baseline.txt
+│   ├── cte_query_1_explain_indexed.txt
+│   ├── cte_query_2_explain_baseline.txt
+│   ├── cte_query_2_explain_indexed.txt
+│   ├── cte_query_3_explain_baseline.txt
+│   ├── cte_query_3_explain_indexed.txt
+│   ├── cte_query_4_explain_baseline.txt
+│   ├── cte_query_4_explain_indexed.txt
+│   ├── cte_query_5_explain_baseline.txt
+│   ├── cte_query_5_explain_indexed.txt
+│   │
+│   ├── pgbench_wf_query_1.log
+│   ├── pgbench_wf_query_2.log
+│   ├── pgbench_cte_query_1.log
+│   ├── pgbench_cte_query_2.log
+│   │
+│   └── index_impact_report.md
+│
+└── results/
+    └── benchmarks.json
 ```
 
 ---

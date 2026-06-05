@@ -1,31 +1,31 @@
 {
   "query_1": {
-    "wf_ms": 1277.19,
-    "cte_ms": 686.95,
-    "index_speedup": 0.59
+    "wf_ms": 1395.19,
+    "cte_ms": 1599.31,
+    "index_speedup": 5.89
   },
   "query_2": {
-    "wf_ms": 1186.55,
-    "cte_ms": 36044.5,
-    "index_speedup": 1.94
+    "wf_ms": 3008.47,
+    "cte_ms": 59503.77,
+    "index_speedup": 0.97
   },
   "query_3": {
-    "wf_ms": 4813.87,
-    "cte_ms": 2160.61,
-    "index_speedup": 0.54
+    "wf_ms": 4543.94,
+    "cte_ms": 2957.14,
+    "index_speedup": 0.79
   },
   "query_4": {
-    "wf_ms": 681.58,
-    "cte_ms": 758.82,
-    "index_speedup": 1.69
+    "wf_ms": 865.22,
+    "cte_ms": 714.56,
+    "index_speedup": 2.53
   },
   "query_5": {
-    "wf_ms": 2430.57,
-    "cte_ms": 4407.84,
-    "index_speedup": 1.1
+    "wf_ms": 2553.19,
+    "cte_ms": 3486.32,
+    "index_speedup": 1.96
   },
   "pgbench_results": {
-    "wf_tps": 4.09,
-    "cte_tps": 5.52
+    "wf_tps": 2.9,
+    "cte_tps": 3.93
   }
 }

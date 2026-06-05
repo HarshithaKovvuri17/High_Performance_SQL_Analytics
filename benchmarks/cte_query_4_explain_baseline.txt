@@ -1,70 +1,70 @@
                                                                           QUERY PLAN                                                                          
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
- Merge Left Join  (cost=80287.34..67941668.10 rows=1286601670 width=12) (actual time=1341.306..1402.882 rows=36063 loops=1)
+ Merge Left Join  (cost=80284.39..67915937.48 rows=1286111110 width=12) (actual time=3085.191..3197.440 rows=36123 loops=1)
    Merge Cond: (orders_last_30d.user_id = l.user_id)
    Filter: (COALESCE(l.orders_last_30d, 0) < COALESCE(p.orders_prev_30d, 0))
-   Rows Removed by Filter: 49087
+   Rows Removed by Filter: 48950
    Buffers: shared hit=21656
    CTE orders_last_30d
-     ->  HashAggregate  (cost=29022.04..29559.20 rows=42973 width=8) (actual time=723.698..741.631 rows=55890 loops=1)
+     ->  HashAggregate  (cost=29019.50..29556.41 rows=42953 width=8) (actual time=1935.723..1962.199 rows=55753 loops=1)
            Group Key: orders.user_id
            Batches: 1  Memory Usage: 6673kB
            Buffers: shared hit=10828
-           ->  Seq Scan on orders  (cost=0.00..28328.00 rows=138808 width=4) (actual time=504.271..667.027 rows=142020 loops=1)
+           ->  Seq Scan on orders  (cost=0.00..28328.00 rows=138300 width=4) (actual time=1412.442..1795.139 rows=141480 loops=1)
                  Filter: (created_at >= (CURRENT_TIMESTAMP - '30 days'::interval))
-                 Rows Removed by Filter: 857980
+                 Rows Removed by Filter: 858520
                  Buffers: shared hit=10828
    CTE orders_prev_30d
-     ->  Finalize HashAggregate  (cost=31782.22..32309.57 rows=42188 width=8) (actual time=425.398..442.804 rows=54323 loops=1)
+     ->  Finalize HashAggregate  (cost=31784.49..32311.95 rows=42197 width=8) (actual time=796.736..843.056 rows=54387 loops=1)
            Group Key: orders_1.user_id
            Batches: 1  Memory Usage: 6673kB
            Buffers: shared hit=10828
-           ->  Gather  (cost=22500.86..31360.34 rows=84376 width=12) (actual time=307.496..393.278 rows=54415 loops=1)
+           ->  Gather  (cost=22501.15..31362.52 rows=84394 width=12) (actual time=538.862..754.082 rows=54518 loops=1)
                  Workers Planned: 2
                  Workers Launched: 2
                  Buffers: shared hit=10828
-                 ->  Partial HashAggregate  (cost=21500.86..21922.74 rows=42188 width=12) (actual time=358.503..365.165 rows=18138 loops=3)
+                 ->  Partial HashAggregate  (cost=21501.15..21923.12 rows=42197 width=12) (actual time=643.013..651.601 rows=18173 loops=3)
                        Group Key: orders_1.user_id
                        Batches: 1  Memory Usage: 6673kB
                        Buffers: shared hit=10828
                        Worker 0:  Batches: 1  Memory Usage: 1561kB
                        Worker 1:  Batches: 1  Memory Usage: 1561kB
-                       ->  Parallel Seq Scan on orders orders_1  (cost=0.00..21244.67 rows=51238 width=4) (actual time=256.000..336.927 rows=40280 loops=3)
+                       ->  Parallel Seq Scan on orders orders_1  (cost=0.00..21244.67 rows=51297 width=4) (actual time=464.322..600.549 rows=40340 loops=3)
                              Filter: ((created_at >= (CURRENT_TIMESTAMP - '60 days'::interval)) AND (created_at < (CURRENT_TIMESTAMP - '30 days'::interval)))
-                             Rows Removed by Filter: 293053
+                             Rows Removed by Filter: 292993
                              Buffers: shared hit=10828
-   ->  Merge Left Join  (cost=14252.09..284135.81 rows=17963861 width=8) (actual time=1315.592..1349.948 rows=85150 loops=1)
+   ->  Merge Left Join  (cost=14251.63..284157.98 rows=17965373 width=8) (actual time=3040.529..3102.536 rows=85073 loops=1)
          Merge Cond: (orders_last_30d.user_id = p.user_id)
          Buffers: shared hit=21656
-         ->  Sort  (cost=10167.33..10380.23 rows=85161 width=4) (actual time=1289.342..1294.420 rows=85150 loops=1)
+         ->  Sort  (cost=10165.94..10378.81 rows=85150 width=4) (actual time=3000.240..3009.778 rows=85073 loops=1)
                Sort Key: orders_last_30d.user_id
                Sort Method: quicksort  Memory: 3073kB
                Buffers: shared hit=21656
-               ->  HashAggregate  (cost=2341.93..3193.54 rows=85161 width=4) (actual time=1258.332..1268.147 rows=85150 loops=1)
+               ->  HashAggregate  (cost=2341.62..3193.12 rows=85150 width=4) (actual time=2948.435..2964.110 rows=85073 loops=1)
                      Group Key: orders_last_30d.user_id
                      Batches: 1  Memory Usage: 6417kB
                      Buffers: shared hit=21656
-                     ->  Append  (cost=0.00..2129.03 rows=85161 width=4) (actual time=723.710..1230.724 rows=110213 loops=1)
+                     ->  Append  (cost=0.00..2128.75 rows=85150 width=4) (actual time=1935.741..2893.811 rows=110140 loops=1)
                            Buffers: shared hit=21656
-                           ->  CTE Scan on orders_last_30d  (cost=0.00..859.46 rows=42973 width=4) (actual time=723.708..758.319 rows=55890 loops=1)
+                           ->  CTE Scan on orders_last_30d  (cost=0.00..859.06 rows=42953 width=4) (actual time=1935.738..1987.853 rows=55753 loops=1)
                                  Buffers: shared hit=10828
-                           ->  CTE Scan on orders_prev_30d  (cost=0.00..843.76 rows=42188 width=4) (actual time=425.407..461.391 rows=54323 loops=1)
+                           ->  CTE Scan on orders_prev_30d  (cost=0.00..843.94 rows=42197 width=4) (actual time=796.750..885.666 rows=54387 loops=1)
                                  Buffers: shared hit=10828
-         ->  Sort  (cost=4084.76..4190.23 rows=42188 width=8) (actual time=26.102..36.060 rows=54323 loops=1)
+         ->  Sort  (cost=4085.69..4191.19 rows=42197 width=8) (actual time=40.109..58.726 rows=54387 loops=1)
                Sort Key: p.user_id
-               Sort Method: quicksort  Memory: 3234kB
-               ->  CTE Scan on orders_prev_30d p  (cost=0.00..843.76 rows=42188 width=8) (actual time=0.014..6.404 rows=54323 loops=1)
-   ->  Sort  (cost=4166.48..4273.91 rows=42973 width=8) (actual time=25.590..35.802 rows=55890 loops=1)
+               Sort Method: quicksort  Memory: 3236kB
+               ->  CTE Scan on orders_prev_30d p  (cost=0.00..843.94 rows=42197 width=8) (actual time=0.077..9.925 rows=54387 loops=1)
+   ->  Sort  (cost=4164.39..4271.78 rows=42953 width=8) (actual time=44.016..63.732 rows=55753 loops=1)
          Sort Key: l.user_id
-         Sort Method: quicksort  Memory: 3283kB
-         ->  CTE Scan on orders_last_30d l  (cost=0.00..859.46 rows=42973 width=8) (actual time=0.007..6.523 rows=55890 loops=1)
+         Sort Method: quicksort  Memory: 3279kB
+         ->  CTE Scan on orders_last_30d l  (cost=0.00..859.06 rows=42953 width=8) (actual time=0.026..12.058 rows=55753 loops=1)
  Planning:
    Buffers: shared hit=89
- Planning Time: 1.530 ms
+ Planning Time: 5.289 ms
  JIT:
    Functions: 72
    Options: Inlining true, Optimization true, Expressions true, Deforming true
-   Timing: Generation 6.300 ms, Inlining 366.316 ms, Optimization 537.693 ms, Emission 368.543 ms, Total 1278.852 ms
- Execution Time: 1448.432 ms
+   Timing: Generation 15.937 ms, Inlining 776.971 ms, Optimization 1164.369 ms, Emission 860.808 ms, Total 2818.084 ms
+ Execution Time: 3275.481 ms
 (66 rows)
 

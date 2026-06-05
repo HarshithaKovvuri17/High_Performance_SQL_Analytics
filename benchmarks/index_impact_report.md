@@ -10,9 +10,9 @@ This report details the execution performance impact of applying B-Tree indexes 
 
 | Metric | Value |
 | :--- | :--- |
-| **Execution Time BEFORE Indexes** | 753.11 ms |
-| **Execution Time AFTER Indexes** | 1277.19 ms |
-| **Speedup Ratio (Before / After)** | 0.59x |
+| **Execution Time BEFORE Indexes** | 8217.76 ms |
+| **Execution Time AFTER Indexes** | 1395.19 ms |
+| **Speedup Ratio (Before / After)** | 5.89x |
 
 ## Optimizer Plan Analysis
 
@@ -25,17 +25,17 @@ This report details the execution performance impact of applying B-Tree indexes 
 - Once the B-Tree index on `orders(user_id, created_at)` and `users(cohort_month)` is created:
   - While Query 1 aggregates by `created_at::date` and does not partition by `user_id`, the index does not completely avoid the sort node since the grouping is on a cast expression `created_at::date`.
   - However, the index allows faster index-only scans or improved data fetching depending on the physical clustering and execution path.
-  - The speedup ratio of **0.59x** demonstrates the performance improvement.
+  - The speedup ratio of **5.89x** demonstrates the performance improvement.
 
 ## Comprehensive Query Execution Performance Summary
 
 | Query | Window Function (Indexed, ms) | CTE / Subquery (Indexed, ms) | WF Index Speedup Ratio |
 | :--- | :---: | :---: | :---: |
-| **Query 1: Rolling Revenue** | 1277.19 | 686.95 | 0.59x |
-| **Query 2: Cohort Ranks** | 1186.55 | 36044.50 | 1.94x |
-| **Query 3: Extreme Orders** | 4813.87 | 2160.61 | 0.54x |
-| **Query 4: Customer Churn** | 681.58 | 758.82 | 1.69x |
-| **Query 5: Revenue Share** | 2430.57 | 4407.84 | 1.10x |
+| **Query 1: Rolling Revenue** | 1395.19 | 1599.31 | 5.89x |
+| **Query 2: Cohort Ranks** | 3008.47 | 59503.77 | 0.97x |
+| **Query 3: Extreme Orders** | 4543.94 | 2957.14 | 0.79x |
+| **Query 4: Customer Churn** | 865.22 | 714.56 | 2.53x |
+| **Query 5: Revenue Share** | 2553.19 | 3486.32 | 1.96x |
 
 ## pgbench Concurrency Load Test Results (Query 1)
 
@@ -44,8 +44,8 @@ This report details the execution performance impact of applying B-Tree indexes 
 - **Duration**: 60 seconds
 
 - **Window Function (WF) version**:
-  - TPS: 4.09 tps
-  - Average Latency: 2443.07 ms
+  - TPS: 2.90 tps
+  - Average Latency: 3449.79 ms
 - **CTE / Self-Join version**:
-  - TPS: 5.52 tps
-  - Average Latency: 1810.43 ms
+  - TPS: 3.93 tps
+  - Average Latency: 2544.12 ms
